@@ -35,7 +35,7 @@ struct IntAndTable interpExp(A_exp e, Table_ t);
 
 // helper functions
 int max2(int a, int b);
-int exps_ma(A_expList exps);
+int exps_ma(A_expList exps);								//计算表达式串中的参数最大数量
 
 /*
  *Please don't modify the main() function
@@ -107,7 +107,7 @@ int max2(int a, int b)
 int exps_ma(A_expList exps)
 {
 	if (exps->kind == A_lastExpList) {
-		// 避免print语句的嵌套
+		// 处理有可能的 print语句的嵌套
 		// 但是两个递归函数互相调用 不知道是否会发生互相无限制调用的情况？
 		//printf("this exp kind is: %d\n", exps->u.last->kind);
 		if (exps->u.last->kind == A_eseqExp) {
