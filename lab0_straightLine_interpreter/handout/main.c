@@ -181,12 +181,15 @@ Table_ interpStm(A_stm s, Table_ t)
 			return t;
 		}
 		case A_assignStm:
+		// 更新字符表
 		{
+			// 获取表达式的值
 			iat = interpExp(s->u.assign.exp, t);
 			t = update(iat->t, s->u.assign.id, iat->i);
 			return t;
 		}
 		case A_printStm:
+		// 按照语义输出
 		{
 			iat = interpExpList(s->u.print.exps, t);
       		return iat->t;
@@ -200,17 +203,19 @@ Table_ interpStm(A_stm s, Table_ t)
 }
 
 /**
- *
+ * 使用符号表t解释表达式e，并生成一个表达式的整型值和新表
  */
 IntAndTable_ interpExp(A_exp e, Table_ t)
 {
 	switch (e->kind) {
 		case A_idExp:
+		// 对于原表无更新
 		{
 			return IntAndTable(lookup(t, e->u.id), t);
 
 		}
 		case A_numExp:
+		// 对于原表无更新
 		{
 			return IntAndTable(e->u.num, t);
 		}
@@ -219,6 +224,7 @@ IntAndTable_ interpExp(A_exp e, Table_ t)
 			int lval = 0, rval = 0;
 			IntAndTable_ tmp;
 
+			// 顺序 matters
 			tmp = interpExp(e->u.op.left, t);
 			lval = tmp->i;
 			tmp = interpExp(e->u.op.right, tmp->t);
@@ -259,6 +265,7 @@ IntAndTable_ interpExp(A_exp e, Table_ t)
 		}
 		case A_eseqExp:
 		{
+			// 先计算语句stm的影响，然后计算表达式
 			t = interpStm(e->u.eseq.stm, t);
 			return interpExp(e->u.eseq.exp, t);
 		}
@@ -270,7 +277,7 @@ IntAndTable_ interpExp(A_exp e, Table_ t)
 }
 
 /**
- *
+ * 根据符号表t 打印表达式链表的内容，并返回表达式的整型值和新表
  */
 IntAndTable_ interpExpList(A_expList expList, Table_ t)
 {
@@ -295,14 +302,17 @@ IntAndTable_ interpExpList(A_expList expList, Table_ t)
 	}
 }
 
-/**
- *
+/** 
+ * 添加一个新的节点到 键值对链表结构的 首位
  */
 Table_ update(Table_ t, string id, int value)
 {
 	return Table(id, value, t);
 }
 
+/**
+ * 从前往后找，第一个找到的也就是最新值
+ */
 int lookup(Table_ t, string key)
 {
 	Table_ temp = t;
